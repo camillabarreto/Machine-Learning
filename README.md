@@ -8,7 +8,7 @@ Esse repositório é destinado para o estudo de Machine Learning e contém docum
 * **Descrição do repositório:** Contém os slides das aulas concluídas e as tarefas realizadas.
 * **Status:** em andamento.
 
-## Livro: Reinforcement Learning An Introduction
+## Livro: [Reinforcement Learning An Introduction](https://github.com/camillabarreto/Machine-Learning/tree/master/Livros/Reinforcement%20Learning%20An%20Introduction)
 * **Edição:** 2nd Edition
 * **Autores:** Richard S. Sutton, Andrew G Barto
 * **Descrição do repositório:** Contém livro em pdf e resolução de exemplo/exercício.

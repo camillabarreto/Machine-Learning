@@ -1,0 +1,195 @@
+1 Redes Neurais
+
+No exercício anterior, você implementou a propagação de feedforward para redes neurais e a usou para prever dígitos manuscritos com os pesos que fornecemos. Neste exercício, você implementará o algoritmo de retropropagação para aprender os parâmetros para a rede neural.
+
+O script fornecido, ex4.m, ajudará você a executar este exercício.
+
+1.1 Visualizando os Dados
+
+Na primeira parte do ex4.m, o código carregará os dados e os exibirá em um gráfico bidimensional (Figura 1) chamando a função displayData.
+
+Este é o mesmo conjunto de dados que você usou no exercício anterior. Existem 5000 exemplos de treinamento em ex3data1.mat, em que cada exemplo de treinamento é uma imagem de 20 pixels por 20 pixels em escala de cinza do dígito. Cada pixel é representado por um número de ponto flutuante, indicando a intensidade da escala de cinza nesse local. A grade de 20 por 20 pixels é "desenrolada" em um vetor 400-dimensional. Cada um desses exemplos de treinamento se torna uma única linha em nossa matriz de dados X. Isso nos dá uma matriz X de 5000 por 400, onde cada linha é um exemplo de treinamento para uma imagem de dígitos manuscritos.
+
+X ...
+
+A segunda parte do conjunto de treinamento é um vetor de 5000 dimensões y que contém rótulos para o conjunto de treinamento. Para tornar as coisas mais compatíveis com a indexação Octave / MATLAB, onde não há índice zero, mapeamos o dígito zero para o valor dez. Portanto, um dígito "0" é rotulado como "10", enquanto os dígitos "1" a "9" são rotulados como "1" a "9" em sua ordem natural.
+
+1.2 Representação do modelo
+
+Nossa rede neural é mostrada na Figura 2. Ela possui 3 camadas - uma camada de entrada, uma camada oculta e uma camada de saída. Lembre-se de que nossas entradas são valores de pixel de imagens de dígitos. Como as imagens são do tamanho 20 × 20, isso nos dá 400 unidades de camada de entrada (sem contar a unidade de polarização extra que sempre gera +1). Os dados de treinamento serão carregados nas variáveis ​​X e y pelo script ex4.m.
+
+Você recebeu um conjunto de parâmetros de rede (Θ(1), Θ(2)) já treinados por nós. Eles são armazenados em ex4weights.mat e serão carregados por ex4.m no Theta1 e Theta2. Os parâmetros têm dimensões dimensionadas para uma rede neural com 25 unidades na segunda camada e 10 unidades de saída (correspondentes às classes de 10 dígitos).
+
+1.3 Função feedforward e cost
+
+Agora você implementará a função de custo e o gradiente para a rede neural. Primeiro, preencha o código em nnCostFunction.m para devolver o custo.
+Lembre-se de que a função de custo para a rede neural (sem regularização) é
+
+J (THETA)
+
+onde hθ(x(i)) é calculado como mostrado na Figura 2 e K = 10 é o número total (3) de possíveis marcadores. Observe que h θ (x (i)) k = a k é a ativação (valor de saída) da k-ésima unidade de saída. Lembre-se também de que, enquanto os rótulos originais (na variável y) eram 1, 2, ..., 10, com o objetivo de treinar uma rede neural, precisamos recodificar os rótulos como vetores contendo apenas os valores 0 ou 1, portanto naquela
+
+y ...
+
+Por exemplo, se x (i) é uma imagem do dígito 5, então o correspondente
+y (i) (que você deve usar com a função de custo) deve ser um vetor de 10 dimensões com y 5 = 1 e os outros elementos iguais a 0.
+
+Você deve implementar a computação de avanço que calcula h θ (x (i)) para cada exemplo ie soma o custo em todos os exemplos. Seu código também deve funcionar para um conjunto de dados de qualquer tamanho, com qualquer número de rótulos (você pode supor que sempre haja pelo menos K ≥ 3 rótulos).
+
+Nota de implementação: A matriz X contém os exemplos nas linhas (ou seja, X (i, :) 'é o i-ésimo exemplo de treinamento x (i), expresso como um vetor × 1.) Quando você conclui o código em nnCostFunction.m , você precisará adicionar a coluna de 1s à matriz X. Os parâmetros para cada unidade na rede neural são representados em Theta1 e Theta2 como uma linha. Especificamente, a primeira linha do Theta1 corresponde à primeira unidade oculta na segunda camada. Você pode usar um loop for nos exemplos para calcular o custo.
+
+Quando terminar, o ex4.m chamará sua nnCostFunction usando o conjunto carregado de parâmetros para Theta1 e Theta2. Você deve ver que o custo é de cerca de 0,287629.
+
+Agora você deve enviar suas soluções.
+
+===================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==               Feedforward and Cost Function |  30 /  30 | Nice work!
+===================================================================================
+
+1.4 Função de custo regularizado
+
+A função de custo para redes neurais com regularização é dada por
+
+J ...
+
+Você pode assumir que a rede neural terá apenas três camadas - uma camada de entrada, uma camada oculta e uma camada de saída. No entanto, seu código deve funcionar para qualquer número de unidades de entrada, unidades ocultas e unidades de saída. Embora tenhamos listado explicitamente os índices acima para Θ (1) e Θ (2) para maior clareza, observe que seu código geralmente deve funcionar com Θ (1) e Θ (2) de qualquer tamanho.
+
+Observe que você não deve regularizar os termos que correspondem ao viés. Para as matrizes Theta1 e Theta2, isso corresponde à primeira coluna de cada matriz. Agora você deve adicionar regularização à sua função de custo. Observe que você pode primeiro calcular a função de custo não regulamentado J usando o nnCostFunction.m existente e depois adicionar o custo para os termos de regularização.
+
+Quando terminar, o ex4.m chamará sua nnCostFunction usando o conjunto carregado de parâmetros para Theta1 e Theta2 e λ = 1. Você deve ver que o custo é de cerca de 0,383770.
+
+Agora você deve enviar suas soluções.
+===================================================================================
+
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==               Feedforward and Cost Function |  30 /  30 | Nice work!
+==                   Regularized Cost Function |  15 /  15 | Nice work!
+===================================================================================
+
+2 Retropropagação
+
+Nesta parte do exercício, você implementará o algoritmo de retropropagação para calcular o gradiente da função de custo da rede neural. Você precisará concluir o nnCostFunction.m para que ele retorne um valor apropriado para grad. Depois de calcular o gradiente, você poderá treinar a rede neural minimizando a função de custo J (Θ) usando um otimizador avançado como fmincg.
+
+Primeiro, você implementará o algoritmo de retropropagação para calcular os gradientes dos parâmetros para a rede neural (não regulamentada). Depois de verificar se o cálculo do gradiente para o caso não regulamentado está correto, você implementará o gradiente para a rede neural regularizada.
+
+2.1 Gradiente sigmóide
+
+Para ajudá-lo a iniciar esta parte do exercício, você primeiro implementará a função gradiente sigmóide. O gradiente para a função sigmóide pode ser calculado como
+
+g'(z) ...
+
+Onde
+
+sigmóide (z) ...
+
+Quando terminar, tente testar alguns valores chamando sigmoidGradient (z) na linha de comando Octave / MATLAB. Para valores grandes (positivos e negativos) de z, o gradiente deve estar próximo de 0. Quando z = 0, o gradiente deve ser exatamente 0,25. Seu código também deve funcionar com vetores e matrizes. Para uma matriz, sua função deve executar a função gradiente sigmóide em todos os elementos.
+
+Agora você deve enviar suas soluções.
+===================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==               Feedforward and Cost Function |  30 /  30 | Nice work!
+==                   Regularized Cost Function |  15 /  15 | Nice work!
+==                            Sigmoid Gradient |   5 /   5 | Nice work!
+===================================================================================
+
+2.2 Inicialização aleatória
+
+Ao treinar redes neurais, é importante inicializar aleatoriamente os parâmetros para quebra de simetria. Uma estratégia eficaz para a inicialização aleatória é selecionar aleatoriamente valores para Θ (l) uniformemente no intervalo [- init, init]. Você deve usar o init = 0.12. 2 Essa faixa de valores garante que os parâmetros sejam mantidos pequenos e torne o aprendizado mais eficiente. Seu trabalho é concluir randInitializeWeights.m para inicializar os pesos para Θ; modifique o arquivo e preencha o seguinte código:
+
+----
+
+Você não precisa enviar nenhum código para esta parte do exercício.
+
+Agora, você implementará o algoritmo de retropropagação. Lembre-se de que a intuição por trás do algoritmo de retropropagação é a seguinte. Dado um exemplo de treinamento (x (t), y (t)), primeiro executaremos um “encaminhamento” para calcular todas as ativações em toda a rede, incluindo o valor de saída da hipótese h Θ (x). Então, para cada nó j na camada l, gostaríamos de calcular um "termo de erro" δj(l) que mede quanto esse nó foi "responsável" por quaisquer erros em nossa saída.
+
+Para um nó de saída, podemos medir diretamente a diferença entre a (3) ativação da rede e o verdadeiro valor alvo, e usá-lo para definir δj (uma vez que a camada 3 é a camada de saída). Para as unidades ocultas, você calculará δj (l) com base na média ponderada dos termos de erro dos nós na camada (l + 1).
+
+Em detalhes, aqui está o algoritmo de retropropagação (também representado na Figura 3). Você deve implementar as etapas 1 a 4 em um loop que processa um exemplo de cada vez. Concretamente, você deve implementar um loop for para t = 1:m  e colocar as etapas 1 a 4 abaixo dentro do loop for, com a t(th) iteração executando o cálculo no t(th) exemplo de treinamento (x (t), y ( t)). O passo 5 dividirá os gradientes acumulados por m para obter os gradientes para a função de custo da rede neural.
+
+1. Defina os valores da camada de entrada (a (1)) como o t-ésimo exemplo de treinamento x (t). Execute um passo de avanço (Figura 2), calculando as ativações (z (2), a (2), z (3), a (3)) para as camadas 2 e 3. Observe que você precisa adicionar um termo +1 a garantir que os vetores de ativações para as camadas a (1) e a (2) também incluam a unidade de polarização. No Octave / MATLAB, se 1 for um vetor de coluna, adicionar um corresponde a 1 = [1; a 1].
+
+2. Para cada unidade de saída k na camada 3 (a camada de saída), defina
+
+-
+
+onde y k ∈ {0, 1} indica se o exemplo de treinamento atual pertence à classe k (y k = 1) ou se pertence a uma classe diferente (y k = 0). Você pode achar matrizes lógicas úteis para esta tarefa (explicadas no exercício de programação anterior).
+
+3. Para a camada oculta l = 2, defina
+
+---
+
+4. Acumule o gradiente deste exemplo usando a seguinte (2) mula. Observe que você deve pular ou remover δ 0. Em Octave / MATLAB, (2) a remoção de δ 0 corresponde ao delta 2 = delta 2 (2: fim).
+
+---
+
+5. Obtenha o gradiente (não regulamentado) para a função de custo da rede neural
+dividindo os gradientes acumulados por m 1:
+
+-
+
+Dica do Octave / MATLAB: Você deve implementar o algoritmo de retropropagação somente depois de concluir com êxito as funções de feedforward e cost. Ao implementar o algoritmo de retropropagação, geralmente é útil usar a função size para imprimir os tamanhos das variáveis ​​com as quais você está trabalhando, se você encontrar erros de incompatibilidade de dimensão (erros de "argumentos não conformes" no Octave / MATLAB).
+
+Depois de implementar o algoritmo de retropropagação, o script ex4.m continuará executando a verificação de gradiente em sua implementação. A verificação de gradiente permitirá aumentar sua confiança de que seu código está computando os gradientes corretamente.
+
+2.4 Verificação de gradiente
+
+Na sua rede neural, você está minimizando a função de custo J (Θ). Para executar a verificação de gradiente em seus parâmetros, você pode imaginar “desenrolando” os parâmetros Θ (1), Θ (2) em um vetor longo θ. Ao fazer isso, você pode pensar na função de custo sendo J (θ) e usar o seguinte procedimento de verificação de gradiente.
+
+Suponha que você tenha uma função f i (θ) que supostamente calcula ∂θ ∂ i J (θ); você gostaria de verificar se f está emitindo valores derivados corretos.
+
+---
+
+Portanto, θ (i +) é igual a θ, exceto que seu i-ésimo elemento foi incrementado por. Da mesma forma, θ (i−) é o vetor correspondente com o i-ésimo elemento diminuído em. Agora você pode verificar numericamente a correção de i (θ) verificando, para cada i, que:
+
+---
+
+O grau em que esses dois valores devem se aproximar dependerá dos detalhes de J. Mas, assumindo = 10 −4, você geralmente descobrirá que os lados esquerdo e direito dos itens acima concordarão com pelo menos 4 dígitos significativos (e muitas vezes muitos mais).
+
+Implementamos a função para calcular o gradiente numérico para você em computeNumericalGradient.m. Embora não seja necessário modificar o arquivo, recomendamos que você dê uma olhada no código para entender como ele funciona.
+
+2.4 Verificação de gradiente
+
+Na sua rede neural, você está minimizando a função de custo J (Θ). Para executar a verificação de gradiente em seus parâmetros, você pode imaginar “desenrolando” os parâmetros Θ (1), Θ (2) em um vetor longo θ. Ao fazer isso, você pode pensar na função de custo sendo J (θ) e usar o seguinte procedimento de verificação de gradiente.
+
+Suponha que você tenha uma função f i (θ) que supostamente calcula ∂θ ∂ i J (θ); você gostaria de verificar se f está emitindo valores derivados corretos.
+
+Let...
+
+Portanto, θ (i +) é igual a θ, exceto que seu i-ésimo elemento foi incrementado por E. Da mesma forma, θ (i−) é o vetor correspondente com o i-ésimo elemento diminuído em. Agora você pode verificar numericamente a correção de fi (θ) verificando, para cada i, que:
+
+fi ---
+
+O grau em que esses dois valores devem se aproximar dependerá dos detalhes de J. Mas, assumindo = 10 −4, você geralmente descobrirá que os lados esquerdo e direito dos itens acima concordarão com pelo menos 4 dígitos significativos (e muitas vezes muitos mais).
+
+Implementamos a função para calcular o gradiente numérico para você em computeNumericalGradient.m. Embora não seja necessário modificar o arquivo, recomendamos que você dê uma olhada no código para entender como ele funciona.
+
+Na próxima etapa do ex4.m, ele executará a função fornecida checkNNGradients.m, que criará uma pequena rede neural e um conjunto de dados que serão usados ​​para verificar seus gradientes. Se sua implementação de retropropagação estiver correta, você verá uma diferença relativa menor que 1e-9.
+
+
+Dica prática: Ao executar a verificação de gradiente, é muito mais eficiente usar uma pequena rede neural com um número relativamente pequeno de unidades de entrada e unidades ocultas, tendo, assim, um número relativamente pequeno de parâmetros. Cada dimensão de θ requer duas avaliações da função de custo e isso pode ser caro. Na função checkNNGradients, nosso código cria um pequeno modelo aleatório e conjunto de dados que é usado com computeNumericalGradient para verificação de gradiente. Além disso, depois de ter certeza de que seus cálculos de gradiente estão corretos, desative a verificação de gradiente antes de executar seu algoritmo de aprendizado
+
+Dica prática: a verificação de gradiente funciona para qualquer função em que você esteja calculando o custo e o gradiente. Concretamente, você pode usar a mesma função computeNumericalGradient.m para verificar se suas implementações de gradiente para os outros exercícios também estão corretas (por exemplo, a função de custo da regressão logística).
+
+Depois que sua função de custo passa na verificação de gradiente para a função de custo da rede neural (não regulamentada), você deve enviar a função de gradiente da rede neural (retropropagação).
+
+2.5 Redes Neurais Regularizadas
+
+Depois de implementar com êxito o algoritmo de retropropagação, você adicionará regularização ao gradiente. Para explicar a regularização, é possível adicionar isso como um termo adicional depois de calcular os gradientes usando a retropropagação.
+
+Especificamente, depois de calcular ∆(l)ij usando a retropropagação, você deve adicionar a regularização usando
+
+D ...
+
+Observe que você não deve regularizar a primeira coluna de Θ (l), que (l) é usada para o termo de viés. Além disso, nos parâmetros Θ ij, i é indexado a partir de 1 e j é indexado a partir de 0. Assim,
+
+THETA ...
+
+Um tanto confuso, a indexação no Octave / MATLAB começa em 1 (para (l) i e j), portanto, o Theta1 (2, 1) realmente corresponde a Θ 2,0 (ou seja, a entrada na segunda linha, primeira coluna da matriz Θ (1) mostrada acima).
+
+Agora modifique seu código que calcula grad em nnCostFunction para considerar a regularização. Depois que você terminar, o script ex4.m continuará executando a verificação de gradiente em sua implementação. Se o seu código estiver correto, você deve esperar uma diferença relativa menor que 1e-9.
+
+Agora você deve enviar suas soluções.

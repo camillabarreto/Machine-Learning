@@ -1,0 +1,198 @@
+1 Máquinas de vetores de suporte
+
+Na primeira metade deste exercício, você usará máquinas de vetores de suporte (SVMs) com vários conjuntos de dados 2D de exemplo. A experiência com esses conjuntos de dados ajudará você a entender como os SVMs funcionam e como usar um kernel Gaussiano com SVMs. Na próxima metade do exercício, você usará máquinas de vetores de suporte para criar um classificador de spam.
+
+O script fornecido, ex6.m, ajudará você a percorrer a primeira metade do exercício.
+
+1.1 Exemplo de conjunto de dados 1
+
+Começaremos com um exemplo de conjunto de dados em 2D que pode ser separado por um limite linear. O script ex6.m plotará os dados do treinamento (Figura 1). Neste conjunto de dados, as posições dos exemplos positivos (indicados com +) e dos exemplos negativos (indicados com o) sugerem uma separação natural indicada pela lacuna. No entanto, observe que existe um exemplo positivo fora de linha + na extrema esquerda em cerca de (0,1, 4,1). Como parte deste exercício, você também verá como isso afeta os limites da decisão SVM.
+
+Nesta parte do exercício, você tentará usar valores diferentes do parâmetro C com SVMs. Informalmente, o parâmetro C é um valor positivo que controla a penalidade para exemplos de treinamento mal classificados. Um parâmetro C grande informa ao SVM para tentar classificar todos os exemplos corretamente. C desempenha um papel semelhante a λ 1, onde λ é o parâmetro de regularização que estávamos usando anteriormente para regressão logística.
+
+A próxima parte do ex6.m executará o treinamento SVM (com C = 1) usando o software SVM que incluímos no código inicial, svmTrain.m. 2 Quando C = 1, você deve descobrir que o SVM coloca o limite de decisão no espaço entre os dois conjuntos de dados e classifica incorretamente o ponto de dados na extrema esquerda (Figura 2).
+
+Nota de implementação: A maioria dos pacotes de software SVM (incluindo svmTrain.m) adiciona automaticamente o recurso extra x0 = 1 para você e cuida automaticamente do aprendizado do termo de interceptação θ0. Portanto, ao passar seus dados de treinamento para o software SVM, não há necessidade de adicionar esse recurso extra x0 = 1. Em particular, no Octave / MATLAB, seu código deve estar trabalhando com exemplos de treinamento x∈R^n (em vez de x∈R^n+1); por exemplo, no primeiro exemplo de conjunto de dados x∈R^2.
+
+Sua tarefa é tentar diferentes valores de C neste conjunto de dados. Especificamente, você deve alterar o valor de C no script para C = 100 e executar o treinamento SVM novamente. Quando C = 100, você deve descobrir que o SVM agora classifica todos os exemplos corretamente, mas tem um limite de decisão que não parece ser um ajuste natural para os dados (Figura 3).
+
+1.2 SVM com núcleos gaussianos
+
+Nesta parte do exercício, você estará usando SVMs para fazer a classificação não linear. Em particular, você usará SVMs com kernels gaussianos em conjuntos de dados que não são linearmente separáveis.
+
+1.2.1 Kernel Gaussiano
+
+Para encontrar limites de decisão não lineares com o SVM, precisamos primeiro implementar um kernel Gaussiano. Você pode pensar no kernel gaussiano como uma função de similaridade que mede a “distância” entre um par de exemplos (x (i), x (j)). O kernel Gaussiano também é parametrizado por um parâmetro de largura de banda, σ, que determina a rapidez com que a métrica de similaridade diminui (para 0) à medida que os exemplos estão mais distantes.
+
+Agora você deve concluir o código em gaussianKernel.m para calcular o kernel Gaussiano entre dois exemplos, (x (i), x (j)). A função do kernel gaussiano é definida como:
+
+Kgaussian ..
+
+Depois de concluir a função gaussianKernel.m, o script ex6.m testará sua função do kernel em dois exemplos fornecidos e você deverá ver um valor de 0,324652.
+
+Agora você deve enviar suas soluções.
+
+===========================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                             Gaussian Kernel |  25 /  25 | Nice work!
+===========================================================================
+
+1.2.2 Exemplo de conjunto de dados 2
+
+A próxima parte do ex6.m carregará e plotará o conjunto de dados 2 (Figura 4). A partir da figura, você pode observar que não há limite de decisão linear que separa os exemplos positivos e negativos para esse conjunto de dados. No entanto, usando o kernel Gaussiano com o SVM, você poderá aprender um limite de decisão não linear que pode ter um desempenho razoavelmente bom para o conjunto de dados.
+
+Se você implementou corretamente a função do kernel gaussiano, o ex6.m continuará treinando o SVM com o kernel gaussiano neste conjunto de dados.
+
+A Figura 5 mostra o limite de decisão encontrado pelo SVM com um kernel gaussiano. O limite de decisão é capaz de separar a maioria dos exemplos positivos e negativos corretamente e segue bem os contornos do conjunto de dados.
+
+1.2.3 Conjunto de dados de exemplo 3
+
+Nesta parte do exercício, você obterá habilidades mais práticas sobre como usar um SVM com um kernel Gaussiano. A próxima parte do ex6.m carregará e exibirá um terceiro conjunto de dados (Figura 6). Você usará o SVM com o kernel gaussiano com este conjunto de dados.
+
+No conjunto de dados fornecido, ex6data3.mat, você recebe as variáveis ​​X, y, Xval, yval. O código fornecido no ex6.m treina o classificador SVM usando o conjunto de treinamento (X, y) usando parâmetros carregados do dataset3Params.m.
+
+Sua tarefa é usar o conjunto de validação cruzada Xval, yval para determinar o melhor parâmetro C e σ a ser usado. Você deve escrever qualquer código adicional necessário para ajudá-lo a pesquisar sobre os parâmetros C e σ. Para C e σ, sugerimos tentar valores em etapas multiplicativas (por exemplo, 0,01, 0,03, 0,1, 0,3, 1, 3, 10, 30). Observe que você deve tentar todos os pares possíveis de valores para C e σ (por exemplo, C = 0,3 e σ = 0,1). Por exemplo, se você tentar cada um dos 8 valores listados acima para C e para σ 2, acabaria treinando e avaliando (no conjunto de validação cruzada) um total de 8 2 = 64 modelos diferentes.
+
+Depois de determinar os melhores parâmetros C e σ a serem usados, você deve modificar o código no dataset3Params.m, preenchendo os melhores parâmetros encontrados. Para nossos melhores parâmetros, o SVM retornou um limite de decisão mostrado na Figura 7.
+
+Dica de implementação: Ao implementar a validação cruzada para selecionar o melhor parâmetro C e σ a ser usado, é necessário avaliar o erro no conjunto de validação cruzada. Lembre-se de que, para classificação, o erro é definido como a fração dos exemplos de validação cruzada que foram classificados incorretamente. No Octave / MATLAB, você pode calcular esse erro usando média (dupla (previsões ~ = yval)), em que predições é um vetor que contém todas as previsões do SVM e yval são os rótulos verdadeiros do conjunto de validação cruzada. Você pode usar a função svmPredict para gerar as previsões para o conjunto de validação cruzada.
+
+Agora você deve enviar suas soluções.
+
+===========================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                             Gaussian Kernel |  25 /  25 | Nice work!
+==         Parameters (C, sigma) for Dataset 3 |  25 /  25 | Nice work!
+===========================================================================
+
+2 Classificação de spam
+
+Atualmente, muitos serviços de email fornecem filtros de spam capazes de classificar emails em spam e não spam com alta precisão. Nesta parte do exercício, você usará SVMs para criar seu próprio filtro de spam.
+
+Você treinará um classificador para classificar se um determinado email, x, é spam (y = 1) ou não spam (y = 0). Em particular, você precisa converter cada email em um vetor de recurso x ∈ R n. As seguintes partes do exercício mostrarão como um vetor de recurso pode ser construído a partir de um email.
+
+Durante o restante deste exercício, você usará o script ex6 spam.m. O conjunto de dados incluído para este exercício é baseado em um subconjunto do SpamAssassin Public Corpus. 3 Para os fins deste exercício, você usará apenas o corpo do email (excluindo os cabeçalhos do email).
+
+2.1 Pré-processamento de emails
+
+FIGURE 8
+> Alguém sabe quanto custa hospedar um portal da web?
+>
+Bem, depende de quantos visitantes você está esperando. Isso pode variar de menos de 10 dólares por mês a alguns US $ 100. Você deve acessar o site http://www.rackspace.com/ ou talvez o Amazon EC2 se estiver executando algo grande.
+Para se desinscrever desta lista, envie um e-mail para: groupname-unsubscribe@egroups.com
+
+Antes de iniciar uma tarefa de aprendizado de máquina, geralmente é interessante dar uma olhada em exemplos do conjunto de dados. A Figura 8 mostra um email de amostra que contém uma URL, um endereço de email (no final), números e valores em dólares. Embora muitos emails contenham tipos semelhantes de entidades (por exemplo, números, outros URLs ou outros endereços de email), as entidades específicas (por exemplo, o URL específico ou o valor específico em dólares) serão diferentes em quase todos os emails. Portanto, um método frequentemente empregado no processamento de emails é "normalizar" esses valores, para que todos os URLs sejam tratados da mesma forma, todos os números sejam tratados da mesma forma etc. Por exemplo, poderíamos substituir cada URL do email pela string exclusiva "Activationpaddr" para indicar que um URL estava presente.
+
+Isso tem o efeito de permitir que o classificador de spam tome uma decisão de classificação com base na presença de algum URL, e não na presença de um URL específico. Isso geralmente melhora o desempenho de um classificador de spam, uma vez que os spammers geralmente aleatorizam os URLs e, portanto, as chances de ver qualquer URL específico novamente em uma nova parte de spam é muito pequeno.
+
+No processEmail.m, implementamos as seguintes etapas de pré-processamento e normalização de email:
+
+• Letras minúsculas: todo o email é convertido em letras minúsculas, para que a captura de dados seja ignorada (por exemplo, o IndIcaTE é tratado da mesma forma que o Indicate).
+• Remover HTML: todas as tags HTML são removidas dos emails. Muitos e-mails geralmente vêm com formatação HTML; removemos todas as tags HTML, para que apenas o conteúdo permaneça.
+• URLs normalizadores: todos os URLs são substituídos pelo texto "httpaddr".
+• Normalizando endereços de email: com o texto "emailaddr".
+• Normalizando números: "número". Todos os endereços de email são substituídos. Todos os números são substituídos pelo texto
+• Normalizando dólares: todos os cifrões ($) são substituídos pelo texto "dólar".
+• Palavra Stemming: as palavras são reduzidas à sua forma derivada. Por exemplo, "desconto", "descontos", "desconto" e "desconto" são todos substituídos por "desconto". Às vezes, o Stemmer na verdade retira caracteres adicionais do final, então "incluir", "inclui", "incluído" e "incluindo" são todos substituídos por "inclui".
+• Remoção de não palavras: as não palavras e a pontuação foram removidas. Todos os espaços em branco (guias, novas linhas, espaços) foram cortados em um único caractere de espaço.
+
+O resultado dessas etapas de pré-processamento é mostrado na Figura 9. Embora o pré-processamento tenha deixado fragmentos e não palavras de palavras, esse formulário acaba sendo muito mais fácil de trabalhar para executar a extração de recursos.
+
+FIGURA 9
+Qualquer um sabe quanto custa hospedar um portal da Web. Depende de como o visitante espera que você possa estar, com menos do que o número de dólares.
+um mês para um par de dólares, você deve fazer o check-outttttpaddr ou talvez a amazon ecnumb se a sua corrida for grande para se desinscrever da lista de emails envie um email para emailaddr
+
+FIGURAS 10 e 11 (olhar para o papel)
+
+2.1.1 Lista de vocabulário
+
+Após o pré-processamento dos emails, temos uma lista de palavras (por exemplo, Figura 9) para cada email. O próximo passo é escolher quais palavras gostaríamos de usar em nosso classificador e quais gostaríamos de deixar de fora.
+
+Para este exercício, escolhemos apenas as palavras que ocorrem com mais frequência como nosso conjunto de palavras considerado (a lista de vocabulário). Como as palavras que ocorrem apenas no conjunto de treinamento estão apenas em alguns e-mails, elas podem fazer com que o modelo super ajuste o nosso conjunto de treinamento. A lista de vocabulário completa está no arquivo vocab.txt e também é mostrada na Figura 10. Nossa lista de vocabulário foi selecionada ao escolher todas as palavras que ocorrem pelo menos 100 vezes no corpus de spam, resultando em uma lista de 1899 palavras. Na prática, uma lista de vocabulário com cerca de 10.000 a 50.000 palavras é frequentemente usada.
+
+Dada a lista de vocabulário, agora podemos mapear cada palavra nos emails pré-processados ​​(por exemplo, Figura 9) em uma lista de índices de palavras que contêm o índice da palavra na lista de vocabulário. A Figura 11 mostra o mapeamento para o email de amostra. Especificamente, no email de amostra, a palavra "qualquer pessoa" foi a primeira normalizado para "anyon" e, em seguida, mapeado para o índice 86 na lista de vocabulário.
+
+Sua tarefa agora é concluir o código em processEmail.m para executar esse mapeamento. No código, você recebe uma string str, que é uma única palavra do email processado. Você deve procurar a palavra na lista de vocabulário vocabList e descobrir se a palavra existe na lista de vocabulário. Se a palavra existir, adicione o índice da palavra à variável de índices da palavra. Se a palavra não existir e, portanto, não estiver no vocabulário, você pode pular a palavra.
+
+Depois de implementar processEmail.m, o script ex6 spam.m executará seu código na amostra de email e você deverá ver uma saída semelhante às Figuras 9 e 11.
+
+Dica do Octave / MATLAB: No Octave / MATLAB, você pode comparar duas strings com a função strcmp. Por exemplo, strcmp (str1, str2) retornará 1 somente quando as duas cadeias forem iguais. No código inicial fornecido, vocabList é um "conjunto de células" que contém as palavras no vocabulário. No Octave / MATLAB, uma matriz de células é como uma matriz normal (ou seja, um vetor), exceto que seus elementos também podem ser cadeias (o que não podem em uma matriz / vetor normal do Octave / MATLAB) e você indexa nelas usando chaves em vez de colchetes. Especificamente, para obter a palavra no índice i, você pode usar a lista de vocabulário {i}. Você também pode usar length (vocabList) para obter o número de palavras no vocabulário.
+
+Agora você deve enviar suas soluções.
+
+2.2 Extracting Features from Emails
+
+You will now implement the feature extraction that converts each email into a vector in R n . For this exercise, you will be using n = # words in vocabulary list. Specifically, the feature x i ∈ {0, 1} for an email corresponds to whether the i-th word in the dictionary occurs in the email. That is, x i = 1 if the i-th word is in the email and x i = 0 if the i-th word is not present in the email.
+
+Thus, for a typical email, this feature would look like:
+
+You should now complete the code in emailFeatures.m to generate a feature vector for an email, given the word indices.
+
+Once you have implemented emailFeatures.m, the next part of ex6 spam.m will run your code on the email sample. You should see that the feature vec- tor had length 1899 and 45 non-zero entries.
+
+You should now submit your solutions.
+
+===========================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                             Gaussian Kernel |  25 /  25 | Nice work!
+==         Parameters (C, sigma) for Dataset 3 |  25 /  25 | Nice work!
+==                         Email Preprocessing |  25 /  25 | Nice work!
+===========================================================================
+
+2.2 Extraindo recursos de emails
+
+Agora você implementará a extração do recurso que converte cada email em um vetor em R n. Para este exercício, você estará usando n = # palavras na lista de vocabulário. Especificamente, o recurso x i ∈ {0, 1} para um email corresponde a se a i-ésima palavra no dicionário ocorre no email. Ou seja, xi = 1 se a i-ésima palavra estiver no e-mail e xi = 0 se a i-ésima palavra não estiver presente no e-mail.
+
+Assim, para um email típico, esse recurso seria semelhante a:
+
+Agora você deve concluir o código em emailFeatures.m para gerar um vetor de recurso para um email, considerando os índices de palavras.
+
+Depois de implementar o emailFeatures.m, a próxima parte do ex6 spam.m executará seu código no exemplo de email. Você deve ver que o vetor de recurso tinha comprimento 1899 e 45 entradas diferentes de zero.
+
+Agora você deve enviar suas soluções.
+
+===========================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                             Gaussian Kernel |  25 /  25 | Nice work!
+==         Parameters (C, sigma) for Dataset 3 |  25 /  25 | Nice work!
+==                         Email Preprocessing |  25 /  25 | Nice work!
+==                    Email Feature Extraction |  25 /  25 | Nice work!
+==                                   --------------------------------
+==                                             | 100 / 100 | 
+===========================================================================
+
+2.3 Treinando SVM para classificação de spam
+
+Depois de concluir as funções de extração de recursos, a próxima etapa do ex6 spam.m carregará um conjunto de dados de treinamento pré-processado que será usado para treinar um classificador SVM. O spamTrain.mat contém 4000 exemplos de treinamento de e-mail de spam e não spam, enquanto o spamTest.mat contém 1000 exemplos de teste. Cada email original foi processado usando as funções processEmail e emailFeatures e convertido em um vetor x (i) ∈ R 1899.
+
+Após carregar o conjunto de dados, ex6 spam.m continuará treinando um SVM para classificar entre emails de spam (y = 1) e não spam (y = 0). Após a conclusão do treinamento, o classificador obtém uma precisão de treinamento de cerca de 99,8% e uma precisão de teste de cerca de 98,5%.
+
+2.4 Principais preditores de spam
+
+nosso clique em remover visita garantida dólar basenumb vai custar fundamentos nbsp mais lo ga dollarnumb
+
+Para entender melhor como o classificador de spam funciona, podemos inspecionar os parâmetros para ver quais palavras o classificador considera mais preditivas de spam. A próxima etapa do ex6 spam.m encontra os parâmetros com os maiores valores positivos no classificador e exibe as palavras correspondentes (Figura 12). Portanto, se um email contiver palavras como "garantia", "remover", "dólar" e "preço" (os principais preditores mostrados na Figura 12), é provável que seja classificado como spam.
+
+2.5 Exercício opcional (não classificado): tente seus próprios e-mails
+
+Agora que você treinou um classificador de spam, pode começar a testá-lo com seus próprios e-mails. No código inicial, incluímos dois exemplos de email (emailSample1.txt e emailSample2.txt) e dois exemplos de spam (spamSample1.txt e spamSample2.txt). A última parte do ex6 spam.m executa o classificador de spam no primeiro exemplo de spam e o classifica usando o SVM aprendido. Agora você deve tentar os outros exemplos que fornecemos e ver se o classificador os acerta. Você também pode tentar seus próprios emails substituindo os exemplos (arquivos de texto sem formatação) pelos seus próprios emails.
+
+Você não precisa enviar nenhuma solução para este exercício opcional (não classificado).
+
+2.6 Exercício opcional (não classificado): crie seu próprio conjunto de dados
+
+Neste exercício, fornecemos um conjunto de treinamento e um teste pré-processados. Esses conjuntos de dados foram criados usando as mesmas funções (processEmail.m e emailFeatures.m) que você concluiu agora. Para este exercício opcional (não classificado), você criará seu próprio conjunto de dados usando os emails originais do SpamAssassin Public Corpus.
+
+Sua tarefa neste exercício opcional (não classificado) é fazer o download dos arquivos originais do corpus público e extraí-los. Depois de extraí-los, você deve executar as funções processEmail 4 e emailFeatures em cada email para extrair um vetor de recurso de cada email. Isso permitirá que você crie um conjunto de dados X, y de exemplos. Você deve dividir aleatoriamente o conjunto de dados em um conjunto de treinamento, um conjunto de validação cruzada e um conjunto de teste.
+
+Enquanto você cria seu próprio conjunto de dados, também recomendamos que você tente criar sua própria lista de vocabulário (selecionando as palavras de alta frequência que ocorrem no conjunto de dados) e adicionando quaisquer recursos adicionais que você julgue úteis.
+
+Por fim, também sugerimos tentar usar caixas de ferramentas SVM altamente otimizadas, como LIBSVM.
+
+Você não precisa enviar nenhuma solução para este exercício opcional (não classificado).
+
+

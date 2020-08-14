@@ -1,0 +1,169 @@
+1 Regressão linear regularizada
+
+Na primeira metade do exercício, você implementará regressão linear regularizada para prever a quantidade de água que sai de uma barragem usando a alteração do nível da água em um reservatório. Na próxima metade, você passará por alguns diagnósticos de algoritmos de aprendizado de depuração e examinará os efeitos do viés v.s. variação.
+
+O script fornecido, ex5.m, ajudará você a executar este exercício.
+
+1.1 Visualizando o conjunto de dados
+
+Começaremos visualizando o conjunto de dados que contém registros históricos sobre a mudança no nível da água, x, e a quantidade de água que sai da barragem, y.
+
+Este conjunto de dados é dividido em três partes:
+
+• Um conjunto de treinamento que seu modelo aprenderá sobre: ​​X, y
+• Um conjunto de validação cruzada para determinar o parâmetro de regularização: Xval, yval
+• Um conjunto de testes para avaliar o desempenho. Estes são exemplos “invisíveis” que seu modelo não viu durante o treinamento: Xtest, ytest
+
+O próximo passo do ex5.m plotará os dados do treinamento (Figura 1). Nas partes a seguir, você implementará a regressão linear e a utilizará para ajustar uma linha reta às curvas de aprendizado de dados e plotagem. Em seguida, você implementará a regressão polinomial para encontrar um melhor ajuste aos dados.
+
+1.2 Função de custo de regressão linear regularizada
+
+Lembre-se de que a regressão linear regularizada tem a seguinte função de custo:
+
+J (teta)
+
+onde λ é um parâmetro de regularização que controla o grau de regularização (portanto, ajuda a evitar o ajuste excessivo). O termo de regularização aplica uma penalidade no custo geral J. À medida que as magnitudes dos parâmetros do modelo θ j aumentam, a penalidade também aumenta. Observe que você não deve regularizar o termo θ 0. (Em Octave / MATLAB, o termo θ 0 é representado como theta (1), pois a indexação em Octave / MATLAB começa em 1).
+
+Agora você deve completar o código no arquivo linearRegCostFunction.m. Sua tarefa é escrever uma função para calcular a função de custo de regressão linear regularizada. Se possível, tente vetorizar seu código e evite gravar loops. Quando você terminar, a próxima parte do ex5.m executará sua função de custo usando theta inicializado em [1; 1] Você deve esperar ver uma saída de 303.993.
+
+Agora você deve enviar suas soluções.
+================================================================================
+== 
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+== Regularized Linear Regression Cost Function |  25 /  25 | Nice work!
+================================================================================
+
+1.3 Gradiente de regressão linear regularizado
+
+Correspondentemente, a derivada parcial do custo da regressão linear regularizada para θ j é definida como
+
+grad ...
+grad ...
+
+Em linearRegCostFunction.m, adicione o código para calcular o gradiente, retornando-o na variável grad. Quando você terminar, a próxima parte do ex5.m executará sua função de gradiente usando theta inicializado em [1; 1] Você deve esperar ver um gradiente de [-15,30; 598,250].
+
+Agora você deve enviar suas soluções
+================================================================================
+== 
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+== Regularized Linear Regression Cost Function |  25 /  25 | Nice work!
+==      Regularized Linear Regression Gradient |  25 /  25 | Nice work!
+================================================================================
+
+1.4 Ajustando a regressão linear
+
+Quando a função de custo e o gradiente estiverem funcionando corretamente, a próxima parte do ex5.m executará o código em trainLinearReg.m para calcular os valores ideais de θ. Essa função de treinamento usa fmincg para otimizar a função de custo.
+
+Nesta parte, definimos o parâmetro de regularização λ como zero. Como nossa implementação atual de regressão linear está tentando ajustar um θ bidimensional, a regularização não será incrivelmente útil para um θ dessa dimensão baixa. Nas partes posteriores do exercício, você usará regressão polinomial com regularização.
+
+Por fim, o script ex5.m também deve plotar a melhor linha de ajuste, resultando em uma imagem semelhante à Figura 2. A linha de melhor ajuste nos diz que o modelo não é um bom ajuste para os dados porque os dados têm um padrão não linear . Embora a visualização do melhor ajuste, como mostrado, seja uma maneira possível de depurar seu algoritmo de aprendizado, nem sempre é fácil visualizar os dados e o modelo. Na próxima seção, você implementará uma função para gerar curvas de aprendizado que podem ajudá-lo a depurar seu algoritmo de aprendizado, mesmo que não seja fácil visualizar os dados.
+
+2 Variação de polarização
+
+Um conceito importante no aprendizado de máquina é o tradeoff de variação de polarização. Os modelos com viés alto não são complexos o suficiente para os dados e tendem a se desajustar, enquanto os modelos com alta variação se ajustam aos dados de treinamento.
+
+Nesta parte do exercício, você traçará o treinamento e testará os erros em uma curva de aprendizado para diagnosticar problemas de variação de polarização.
+
+2.1 Curvas de aprendizado
+
+Agora você implementará o código para gerar as curvas de aprendizado que serão úteis na depuração de algoritmos de aprendizado. Lembre-se de que uma curvatura de aprendizado representa um erro de treinamento e de validação cruzada em função do tamanho do conjunto de treinamento. Seu trabalho é preencher o learningCurve.m para que ele retorne um vetor de erros para o conjunto de treinamento e o conjunto de validação cruzada.
+
+Para plotar a curva de aprendizado, precisamos de um erro de conjunto de treinamento e validação cruzada para diferentes tamanhos de conjunto de treinamento. Para obter tamanhos diferentes de conjuntos de treinamento, você deve usar subconjuntos diferentes do conjunto original de treinamento X. Especificamente, para um tamanho de conjunto de treinamento i, você deve usar os primeiros exemplos i (por exemplo, X (1: i, :) e y ( 1: i)).
+
+Você pode usar a função trainLinearReg para encontrar os parâmetros θ. Observe que o lambda é passado como um parâmetro para a função learningCurve. Depois de aprender os parâmetros θ, você deve calcular o erro nos conjuntos de treinamento e validação cruzada. Lembre-se de que o erro de treinamento para um conjunto de dados é definido como
+
+Jtrain ...
+
+Em particular, observe que o erro de treinamento não inclui o termo de regularização. Uma maneira de calcular o erro de treinamento é usar sua função de custo existente e definir λ como 0 apenas quando usá-la para calcular o erro de treinamento e o erro de validação cruzada. Ao calcular o erro do conjunto de treinamento, calcule-o no subconjunto de treinamento (ou seja, X (1: n, :) e y (1: n)) (em vez de todo o conjunto de treinamento). No entanto, para o erro de validação cruzada, você deve calculá-lo em todo o conjunto de validação cruzada. Você deve armazenar os erros computados no trem de erro de vetores e no valor de erro.
+
+Quando terminar, ex5.m imprimirá as curvas de aprendizado e produzirá um gráfico semelhante à Figura 3.
+
+Agora você deve enviar suas soluções.
+
+================================================================================
+== 
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+== Regularized Linear Regression Cost Function |  25 /  25 | Nice work!
+==      Regularized Linear Regression Gradient |  25 /  25 | Nice work!
+==                              Learning Curve |  20 /  20 | Nice work!
+================================================================================
+
+Na Figura 3, é possível observar que o erro de trem e o erro de validação cruzada são altos quando o número de exemplos de treinamento é aumentado. Isso reflete um problema de alto viés no modelo - o modelo de regressão linear é muito simples e não pode ajustar-se bem ao nosso conjunto de dados. Na próxima seção, você implementará a regressão polinomial para ajustar um modelo melhor para esse conjunto de dados.
+
+3 Regressão polinomial
+
+O problema com o nosso modelo linear era que ele era simples demais para os dados e resultou em falta de ajuste (viés alto). Nesta parte do exercício, você abordará esse problema adicionando mais recursos. Para uso da regressão polinomial, nossa hipótese tem a forma:
+
+h (teta) ...
+
+Observe que, definindo x 1 = (nível da água), x 2 = (nível da água) 2,. . . , x p = (waterLevel) p, obtemos um modelo de regressão linear em que os recursos são os vários poderes do valor original (waterLevel).
+
+Agora, você adicionará mais recursos usando os poderes mais altos do recurso existente x no conjunto de dados. Sua tarefa nesta parte é concluir o código em polyFeatures.m para que a função mapeie o conjunto de treinamento original X do tamanho m × 1 em seus poderes mais altos. Especificamente, quando um conjunto de treinamento X do tamanho m × 1 é passado para a função, a função deve retornar am × p matriz X poli, em que a coluna 1 mantém os valores originais de X, a coluna 2 mantém os valores de X. ^ 2, a coluna 3 contém os valores de X. ^ 3 e assim por diante. Observe que você não precisa contabilizar o poder de zero-eth nesta função.
+
+Agora você tem uma função que mapeará os recursos para uma dimensão mais alta e a Parte 6 do ex5.m a aplicará ao conjunto de treinamento, ao conjunto de testes e ao conjunto de validação cruzada (que você ainda não usou).
+
+Agora você deve enviar suas soluções.
+
+================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+== Regularized Linear Regression Cost Function |  25 /  25 | Nice work!
+==      Regularized Linear Regression Gradient |  25 /  25 | Nice work!
+==                              Learning Curve |  20 /  20 | Nice work!
+==                  Polynomial Feature Mapping |  10 /  10 | Nice work!
+================================================================================
+
+3.1 Aprendendo a regressão polinomial
+
+Depois de concluir polyFeatures.m, o script ex5.m continuará treinando a regressão polinomial usando sua função de custo de regressão linear.
+
+Lembre-se de que, embora tenhamos termos polinomiais em nosso vetor de características, ainda estamos resolvendo um problema de otimização de regressão linear. Os termos polinomiais simplesmente se transformaram em recursos que podemos usar para regressão linear. Estamos usando a mesma função de custo e gradiente que você escreveu para a parte anterior deste exercício.
+
+Nesta parte do exercício, você usará um polinômio de grau 8. Acontece que, se executarmos o treinamento diretamente nos dados projetados, não funcionará bem, pois os recursos seriam mal dimensionados (por exemplo, um exemplo com x = 40 agora terá um recurso x8 = 40^8 = 6,5 × 10^12). Portanto, você precisará usar a normalização de recursos.
+
+Antes de aprender os parâmetros θ para a regressão polinomial, o ex5.m chama primeiro o featureNormalize e normaliza os recursos do conjunto de treinamento, armazenando os parâmetros mu, sigma separadamente. Já implementamos essa função para você e é a mesma função desde o primeiro exercício.
+
+Depois de aprender os parâmetros θ, você verá dois gráficos (Figura 4,5) gerados para regressão polinomial com λ = 0.
+
+Na Figura 4, você deve ver que o ajuste polinomial é capaz de seguir muito bem os pontos de dados - obtendo assim um baixo erro de treinamento. No entanto, o ajuste polinomial é muito complexo e até cai nos extremos. Este é um indicador de que o modelo de regressão polinomial está ajustando demais os dados de treinamento e não será generalizado.
+
+Para entender melhor os problemas do modelo não regulamentado (λ = 0), é possível ver que a curva de aprendizado (Figura 5) mostra o mesmo efeito em que o baixo erro de treinamento é baixo, mas o erro de validação cruzada é alto. Há uma lacuna entre os erros de treinamento e validação cruzada, indicando um problema de alta variação.
+
+Uma maneira de combater o problema de excesso de ajuste (alta variação) é adicionar regularização ao modelo. Na próxima seção, você experimentará diferentes parâmetros λ para ver como a regularização pode levar a um modelo melhor.
+
+3.2 Exercício opcional (não classificado): Ajustando o parâmetro de regularização
+
+Nesta seção, você poderá observar como o parâmetro de regularização afeta a variação de polarização da regressão polinomial regularizada. Agora você deve modificar o parâmetro lambda no ex5.m e tentar λ = 1, 100. Para cada um desses valores, o script deve gerar um ajuste polinomial para os dados e também uma curva de aprendizado.
+
+Para λ = 1, você deve ver um ajuste polinomial que segue bem a tendência dos dados (Figura 6) e uma curva de aprendizado (Figura 7) mostrando que a validação cruzada e o erro de treinamento convergem para um valor relativamente baixo. Isso mostra que o modelo de regressão polinomial λ = 1 regularizado não apresenta os problemas de alto viés ou alta variância. Com efeito, ele consegue uma boa relação entre viés e variação.
+
+Para λ = 100, você deve ver um ajuste polinomial (Figura 8) que não segue bem os dados. Nesse caso, há muita regularização e o modelo não pode ajustar os dados de treinamento.
+
+Você não precisa enviar nenhuma solução para este exercício opcional (não classificado).
+
+3.3 Selecionando λ usando um conjunto de validação cruzada
+
+Nas partes anteriores do exercício, você observou que o valor de λ pode afetar significativamente os resultados da regressão polinomial regularizada no conjunto de treinamento e validação cruzada. Em particular, um modelo sem regularização (λ = 0) se encaixa bem no conjunto de treinamento, mas não generaliza. Por outro lado, um modelo com muita regularização (λ = 100) não se encaixa bem no conjunto de treinamento e no conjunto de testes. Uma boa escolha de λ (por exemplo, λ = 1) pode fornecer um bom ajuste aos dados.
+
+Nesta seção, você implementará um método automatizado para selecionar o parâmetro λ. Concretamente, você usará um conjunto de validação cruzada para avaliar quão bom é cada valor de λ. Depois de selecionar o melhor valor λ usando o conjunto de validação cruzada, podemos avaliar o modelo no conjunto de testes para estimar o desempenho do modelo nos dados reais não vistos.
+
+Sua tarefa é concluir o código em validationCurve.m. Especificamente, você deve usar a função trainLinearReg para treinar o modelo usando diferentes valores de λ e calcular o erro de treinamento e o erro de validação cruzada. Você deve tentar λ no seguinte intervalo: {0, 0,001, 0,003, 0,01, 0,03, 0,1, 0,3, 1, 3, 10}.
+
+Depois de concluir o código, a próxima parte do ex5.m executará sua função, pode plotar uma curva de validação cruzada do erro v.s. λ que permite selecionar qual parâmetro λ usar. Você deve ver um gráfico semelhante à Figura 9. Nesta figura, podemos ver que o melhor valor de λ é em torno de 3. Devido à aleatoriedade nas divisões de treinamento e validação do conjunto de dados, o erro de validação cruzada às vezes pode ser menor que o erro de treinamento.
+
+Agora você deve enviar suas soluções.
+
+================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+== Regularized Linear Regression Cost Function |  25 /  25 | Nice work!
+==      Regularized Linear Regression Gradient |  25 /  25 | Nice work!
+==                              Learning Curve |  20 /  20 | Nice work!
+==                  Polynomial Feature Mapping |  10 /  10 | Nice work!
+==                            Validation Curve |  20 /  20 | Nice work!
+==                                   --------------------------------
+==                                             | 100 / 100 | 
+================================================================================

@@ -1,0 +1,214 @@
+1 Classificação Multi-Class
+
+Para este exercício, você utilizará regressão logística e redes neurais para reconhecer dígitos manuscritos (de 0 a 9). Hoje, o reconhecimento automático de dígitos manuscritos é amplamente utilizado - desde o reconhecimento de códigos postais (códigos postais) em envelopes de correio até o reconhecimento de valores escritos em cheques bancários. Este exercício mostrará como os métodos que você aprendeu podem ser usados ​​para esta tarefa de classificação.
+
+Na primeira parte do exercício, você estenderá sua implementação anterior de regressão logística e aplicará à classificação one-vs-all.
+
+1.1 Conjunto de dados
+
+Você recebe um conjunto de dados em ex3data1.mat que contém 5000 exemplos de treinamento de dígitos manuscritos. O formato .mat significa que os dados foram salvos em um formato de matriz Octave / MATLAB nativo, em vez de um formato de texto (ASCII) como um arquivo csv. Essas matrizes podem ser lidas diretamente no seu programa usando o comando load. Após o carregamento, matrizes das dimensões e valores corretos aparecerão na memória do seu programa. A matriz já terá o nome, portanto, você não precisa atribuir nomes a eles.
+
+---
+
+Existem 5000 exemplos de treinamento em ex3data1.mat, em que cada exemplo de treinamento é uma imagem de 20 pixels por 20 pixels em escala de cinza do dígito. Cada pixel é representado por um número de ponto flutuante, indicando a intensidade da escala de cinza nesse local. A grade de 20 por 20 pixels é "desenrolada" em um vetor 400-dimensional. Cada um desses exemplos de treinamento se torna uma única linha em nossa matriz de dados X. Isso nos dá uma matriz X de 5000 por 400, onde cada linha é um exemplo de treinamento para uma imagem de dígito manuscrita.
+
+---
+
+A segunda parte do conjunto de treinamento é um vetor de 5000 dimensões y que contém rótulos para o conjunto de treinamento. Para tornar as coisas mais compatíveis com a indexação Octave / MATLAB, onde não há índice zero, mapeamos o dígito zero para o valor dez. Portanto, um dígito "0" é rotulado como "10", enquanto os dígitos "1" a "9" são rotulados como "1" a "9" em sua ordem natural.
+
+1.2 Visualizando os Dados
+
+Você começará visualizando um subconjunto do conjunto de treinamento. Na Parte 1 do ex3.m, o código seleciona aleatoriamente seleciona 100 linhas de X e passa essas linhas para a função displayData. Essa função mapeia cada linha para uma imagem em escala de cinza de 20 por 20 pixels e exibe as imagens juntas. Fornecemos a função displayData, e você deve examinar o código para ver como ele funciona. Depois de executar esta etapa, você deverá ver uma imagem como a Figura 1.
+
+1.3 Vetorizando a regressão logística
+
+Você usará vários modelos de regressão logística um para todos para criar um classificador de várias classes. Como existem 10 classes, você precisará treinar 10 classificadores de regressão logística separados. Para tornar esse treinamento eficiente, é importante garantir que seu código seja bem vetorizado. Nesta seção, você implementará uma versão vetorizada da regressão logística que não emprega nenhum para loops. Você pode usar seu código no último exercício como ponto de partida para este exercício.
+
+1.3.1 Vetorizando a função de custo
+
+Começaremos escrevendo uma versão vetorizada da função de custo. Lembre-se de que, na regressão logística (não regulamentada), a função de custo é
+
+J (teta) ...
+
+Para calcular cada elemento no somatório, temos que calcular hθ (x (i)) para cada exemplo i, onde hθ (x (i)) = g (θTx (i)) eg (z) = 1 + e 1 −z é a função sigmóide. Acontece que podemos calcular isso rapidamente para todos os nossos exemplos usando a multiplicação de matrizes. Vamos definir X e θ como
+
+X ...
+
+Então, calculando o produto da matriz Xθ, temos
+
+Xtheta ...
+
+Na última igualdade, usamos o fato de que aT.b = bT.a se a e b são vetores. Isso nos permite calcular os produtos θTx(i) para todos os nossos exemplos i em uma linha de código. Seu trabalho é gravar a função de custo não regulamentado no arquivo lrCostFunction.m
+
+Sua implementação deve usar a estratégia que apresentamos acima para calcular       θTx(i). Você também deve usar uma abordagem vetorizada para o restante da função de custo. Uma versão totalmente vetorizada de lrCostFunction.m não deve conter nenhum loop.
+
+(Dica: convém usar a operação de multiplicação por elementos (. *) E a soma da operação soma ao escrever esta função)
+
+1.3.2 Vetorizando o gradiente
+
+Lembre-se de que o gradiente do custo de regressão logística (não regulamentado) é um vetor em que o j-ésimo elemento é definido como
+
+dJ ...
+
+Para vetorizar essa operação sobre o conjunto de dados, começamos escrevendo todas as derivadas parciais explicitamente para todos θ j,
+
+-
+Onde
+-
+
+Observe que x (i) é um vetor, enquanto (h θ (x (i)) -y (i)) é um escalar (número único). Para entender o último passo da derivação, deixe β i = (h θ (x (i)) - y (i)) e observe que:
+
+SOMA ...
+
+onde os valores β i = (h θ (x (i)) - y (i)).
+
+A expressão acima permite calcular todas as derivadas parciais sem loops. Se você se sente à vontade com álgebra linear, recomendamos que você trabalhe com as multiplicações de matrizes acima para se convencer de que a versão vetorizada faz os mesmos cálculos. Agora você deve implementar a Equação 1 para calcular o gradiente vetorizado correto. Quando terminar, conclua a função lrCostFunction.m implementando o gradiente.
+
+1.3.3 Vetorizando regressão logística regularizada
+
+Depois de implementar a vetorização para regressão logística, você adicionará regularização à função de custo. Lembre-se de que, para regressão logística regularizada, a função de custo é definida como
+
+J (teta)
+
+Observe que você não deve regularizar θ 0, que é usado para o viés
+prazo.
+
+Correspondentemente, a derivada parcial do custo de regressão logística regularizada para θ j é definida como
+
+dJ
+
+Agora modifique seu código em lrCostFunction para considerar a regularização.
+Mais uma vez, você não deve colocar nenhum loop no seu código.
+
+Agora você deve enviar suas soluções.
+
+== 
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==             Regularized Logistic Regression |  30 /  30 | Nice work!
+
+
+1.4 Classificação Um vs Todos
+
+Nesta parte do exercício, você implementará a classificação one-vs-all treinando vários classificadores de regressão logística regularizados, um para cada uma das classes K em nosso conjunto de dados (Figura 1). No conjunto de dados de dígitos manuscritos, K = 10, mas seu código deve funcionar com qualquer valor de K.
+
+Agora você deve concluir o código em oneVsAll.m para treinar um classificador para cada classe. Em particular, seu código deve retornar todos os parâmetros do classificador em uma matriz K K R K × (N +1), em que cada linha de Θ corresponde aos parâmetros de regressão logística aprendidos para uma classe. Você pode fazer isso com um loop “for” de 1 a K, treinando cada classificador independentemente.
+
+Observe que o argumento y para essa função é um vetor de rótulos de 1 a 10, onde mapeamos o dígito “0” para o rótulo 10 (para evitar confusões com a indexação).
+
+Ao treinar o classificador para a classe k ∈ {1, ..., K}, você desejará um vetor m-dimensional dos rótulos y, onde yj ∈ 0, 1 indica se a j-ésima instância de treinamento pertence à classe k (yj = 1) ou se pertencer a uma classe diferente (yj = 0). Você pode achar matrizes lógicas úteis para esta tarefa.
+
+
+Além disso, você estará usando fmincg para este exercício (em vez de fminunc). O fmincg funciona de maneira semelhante ao fminunc, mas é mais eficiente para lidar com um grande número de parâmetros.
+
+Depois de concluir corretamente o código para oneVsAll.m, o script ex3.m continuará usando sua função oneVsAll para treinar um classificador de várias classes.
+
+Agora você deve enviar suas soluções.
+
+====================== SEU CÓDIGO AQUI ======================
+% ONEVSALL treina vários classificadores de regressão logística e retorna todos os classificadores em uma matriz all_theta, onde a i-ésima linha de all_theta corresponde ao classificador para o rótulo i 
+
+[all_theta] = ONEVSALL (X, y, num_labels, lambda) treina regressão logística de num_labels classificadores e retorna cada um desses classificadores em uma matriz all_theta, onde a i-ésima linha de all_theta corresponde ao classificador do rótulo i
+
+Instruções: Você deve concluir o código a seguir para treinar os classificadores de regressão logística num_labels com o parâmetro de regularização lambda.
+
+Dica: theta (:) retornará um vetor de coluna.
+
+Dica: Você pode usar y == c para obter um vetor de 1 e 0 que informa se a verdade básica é verdadeira / falsa para esta classe.
+
+Nota: Para esta atribuição, recomendamos o uso de fmincg para otimizar a função de custo. Não há problema em usar um loop for (para c = 1: num_labels) para fazer um loop nas diferentes classes.
+
+fmincg funciona de maneira semelhante ao fminunc, mas é mais eficiente quando estamos lidando com um grande número de parâmetros.
+
+Exemplo de código para fmincg:
+
+Definir teta inicial
+inicial_eta = zeros (n + 1, 1);
+
+Definir opções para fminunc
+options = optimset ('GradObj', 'on', 'MaxIter', 50);
+
+Execute fmincg para obter o teta ideal
+Esta função retornará theta e o custo
+[teta] = ...
+fmincg (@ (t) (função lrCost (t, X, (y == c), lambda)), ...
+initial_theta, opções);
+================================================================== 
+== 
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==             Regularized Logistic Regression |  30 /  30 | Nice work!
+==              One-vs-All Classifier Training |  20 /  20 | Nice work!
+================================================================== 
+
+1.4.1 Previsão de um contra todos
+
+Depois de treinar seu classificador um contra todos, agora você pode usá-lo para prever o dígito contido em uma determinada imagem. Para cada entrada, você deve calcular a “probabilidade” de pertencer a cada classe usando os classificadores de regressão logística treinados. Sua função de previsão um contra todos selecionará a classe para a qual o classificador de regressão logística correspondente gera a maior probabilidade e retornará o rótulo da classe (1, 2, ... ou K) como a previsão para o exemplo de entrada.
+
+Agora você deve concluir o código em predictOneVsAll.m para usar o classificador one-vs-all para fazer previsões. 
+
+Quando terminar, o ex3.m chamará sua função predictOneVsAll usando o valor aprendido de Θ. Você deve ver que a precisão do conjunto de treinamento é de cerca de 94,9% (ou seja, classifica corretamente 94,9% dos exemplos no conjunto de treinamento). 
+
+Agora você deve enviar suas soluções.
+
+================================================================== 
+% PREDITO Preveja o rótulo de um classificador treinado um contra todos. Os rótulos estão no intervalo 1..K, onde K = tamanho (all_theta, 1).
+
+p = PREDICTONEVSALL (all_theta, X) retornará um vetor de previsões para cada exemplo na matriz X. Observe que X contém os exemplos em linhas. all_theta é uma matriz em que a i-ésima linha é um vetor teta de regressão logística treinado para a i-ésima classe. Você deve definir p como um vetor de valores de 1..K (por exemplo, p = [1; 3; 1; 2] prevê as classes 1, 3, 1, 2 para 4 exemplos)
+
+% ====================== SEU CÓDIGO AQUI ======================
+
+Instruções: complete o código a seguir para fazer previsões usando os parâmetros de regressão logística aprendidos (um contra todos).
+
+Você deve definir p como um vetor de previsões (de 1 a num_labels).
+
+Dica: Esse código pode ser feito todo vetorizado usando a função max.
+Em particular, a função max também pode retornar o índice do elemento max, para obter mais informações, consulte 'help max'. Se seus exemplos estão em linhas, você pode usar max (A, [], 2) para obter o máximo para cada linha.
+
+================================================================== 
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==             Regularized Logistic Regression |  30 /  30 | Nice work!
+==              One-vs-All Classifier Training |  20 /  20 | Nice work!
+==            One-vs-All Classifier Prediction |  20 /  20 | Nice work!
+================================================================== 
+
+
+2 Redes Neurais
+
+Na parte anterior deste exercício, você implementou a regressão logística de várias classes para reconhecer dígitos manuscritos. No entanto, a regressão logística não pode formar hipóteses mais complexas, pois é apenas um classificador linear.
+
+Nesta parte do exercício, você implementará uma rede neural para reconhecer dígitos manuscritos usando o mesmo conjunto de treinamento de antes. A rede neural será capaz de representar modelos complexos que formam hipóteses não lineares. Nesta semana, você estará usando parâmetros de uma rede neural que já treinamos. Seu objetivo é implementar o algoritmo de propagação de feedforward para usar nossos pesos para previsão. No exercício da próxima semana, você escreverá o algoritmo de retropropagação para aprender os parâmetros da rede neural.
+
+O script fornecido, ex3 nn.m, ajudará você a executar este exercício.
+
+2.1 Representação do modelo
+
+Nossa rede neural é mostrada na Figura 2. Ela possui 3 camadas - uma camada de entrada, uma camada oculta e uma camada de saída. Lembre-se de que nossas entradas são valores de pixel de imagens de dígitos. Como as imagens são do tamanho 20 × 20, isso nos dá 400 unidades de camada de entrada (excluindo a unidade de polarização extra que sempre gera +1). Como antes, os dados de treinamento serão carregados nas variáveis ​​X e y.
+
+Você recebeu um conjunto de parâmetros de rede (Θ (1), Θ (2)) já treinados por nós. Eles são armazenados em ex3weights.mat e serão carregados por ex3 nn.m no Theta1 e Theta2. Os parâmetros têm dimensões dimensionadas para uma rede neural com 25 unidades na segunda camada e 10 unidades de saída (correspondentes às classes de 10 dígitos). .
+
+----
+
+2.2 Propagação e previsão de feedforward
+
+Agora você implementará a propagação de feedforward para a rede neural. Você precisará preencher o código em predict.m para retornar a previsão da rede neural.
+
+Você deve implementar a computação antecipada que calcula h θ (x (i)) para cada exemplo ie retorna as previsões associadas. Semelhante à estratégia de classificação one-vs-all, a previsão da rede neural será o rótulo que possui a maior saída (h θ (x)) k.
+
+Nota de implementação: A matriz X contém os exemplos em linhas. Quando você concluir o código em predict.m, precisará adicionar a coluna de 1s à matriz. As matrizes Theta1 e Theta2 contêm os parâmetros para cada unidade em linhas. Especificamente, a primeira linha do Theta1 corresponde à primeira unidade oculta na segunda camada. No Octave / MAT-LAB, quando você calcula z (2) = Θ (1) a (1), certifique-se de indexar (e se necessário, transpor) X corretamente para obter um (l) como um vetor de coluna .
+
+Quando terminar, ex3 nn.m chamará sua função de previsão usando o conjunto carregado de parâmetros para Theta1 e Theta2. Você deve ver que a precisão é de cerca de 97,5%. Depois disso, uma sequência interativa será iniciada exibindo imagens do conjunto de treinamento, uma de cada vez, enquanto o console imprime o rótulo previsto para a imagem exibida. Para parar a sequência da imagem, pressione Ctrl-C.
+
+Agora você deve enviar suas soluções.
+
+==================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==             Regularized Logistic Regression |  30 /  30 | Nice work!
+==              One-vs-All Classifier Training |  20 /  20 | Nice work!
+==            One-vs-All Classifier Prediction |  20 /  20 | Nice work!
+==          Neural Network Prediction Function |  30 /  30 | Nice work!
+==                                   --------------------------------
+==                                             | 100 / 100 | 
+==================================================================

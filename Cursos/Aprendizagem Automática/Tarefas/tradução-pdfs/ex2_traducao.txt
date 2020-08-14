@@ -1,0 +1,160 @@
+1 Regressão Logística
+
+Nesta parte do exercício, você criará um modelo de regressão logística para prever se um aluno é admitido em uma universidade.
+
+Suponha que você seja o administrador de um departamento universitário e deseje determinar a chance de admissão de cada candidato com base nos resultados obtidos em dois exames. Você tem dados históricos de candidatos anteriores que podem ser usados ​​como um conjunto de treinamento para regressão logística. Para cada exemplo de treinamento, você tem a pontuação do candidato em dois exames e a decisão de admissão.
+
+Sua tarefa é criar um modelo de classificação que calcule a probabilidade de admissão de um candidato com base nas pontuações desses dois exames. Este esboço
+e o código da estrutura em ex2.m o guiará pelo exercício.
+
+1.1 Visualizando os Dados
+
+Antes de começar a implementar qualquer algoritmo de aprendizado, é sempre bom visualizar os dados, se possível. Na primeira parte do ex2.m, o código carregará os dados e os exibirá em um gráfico bidimensional chamando a função plotData.
+
+Agora você concluirá o código no plotData para que ele exiba uma figura como a Figura 1, onde os eixos são as duas pontuações no exame e os exemplos positivos e negativos são mostrados com marcadores diferentes.
+
+Para ajudar você a se familiarizar com a plotagem, deixamos plotData.m em branco para que você possa tentar implementá-la. No entanto, este é um exercício opcional (não classificado). Também fornecemos nossa implementação abaixo para que você possa copiá-la ou consultá-la. Se você optar por copiar o nosso exemplo, verifique o que cada um de seus comandos está fazendo consultando a documentação do Octave / MATLAB.
+
+==================================| ANOTAÇÃO |==================================
+* exemplo da tabela de dados: 	74.24869136721598,69.82457122657193,1
+	- notas 0 à 100
+	- 1 é aprovação e 0 não aprovação
+* a resposta de como plotar está no pdf
+================================================================================
+
+1.2 Implementação
+1.2.1 Exercício de aquecimento: função sigmóide
+
+Antes de começar com a função de custo real, lembre-se de que a hipótese de regressão logística é definida como: h (x) ...
+
+onde a função g é a função sigmóide. A função sigmóide é definida como: g (z) ...
+
+Seu primeiro passo é implementar esta função no sigmoid.m, para que possa ser chamada pelo resto do seu programa. Quando terminar, tente testar alguns valores chamando sigmoid (x) na linha de comando Octave / MATLAB. Para valores positivos grandes de x, o sigmóide deve estar próximo de 1, enquanto que para valores negativos grandes, o sigmóide deve estar próximo de 0. A avaliação de sigmóide (0) deve fornecer exatamente 0,5. Seu código também deve funcionar com vetores e matrizes. Para uma matriz, sua função deve executar a função sigmóide em todos os elementos.
+
+Você pode enviar sua solução para classificação digitando submit na linha de comando Octave / MATLAB. O script de envio solicitará seu email de login e token de envio e perguntará quais arquivos você deseja enviar. Você pode obter um token de envio na página da Web para a atribuição.
+
+Agora você deve enviar suas soluções.
+
+================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                            Sigmoid Function |   5 /   5 | Nice work!
+================================================================================
+
+1.2.2 Função de custo e gradiente
+
+Agora você implementará a função de custo e o gradiente para a regressão logística. Preencha o código em costFunction.m para retornar o custo e o gradiente.
+
+Lembre-se de que a função de custo na regressão logística é: J (TEHTA)
+
+e o gradiente do custo é um vetor do mesmo comprimento que θ, onde o j ^ ésimo elemento (para j = 0, 1,..., n) é definido da seguinte maneira: dJ (teta)
+
+Observe que, embora esse gradiente pareça idêntico ao gradiente de regressão linear, a fórmula é realmente diferente porque a regressão linear e logística possui definições diferentes de h θ (x).
+
+Quando terminar, o ex2.m chamará sua costFunction usando os parâmetros iniciais de θ. Você deve ver que o custo é de cerca de 0,693.
+
+Agora você deve enviar suas soluções.
+
+================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                            Sigmoid Function |   5 /   5 | Nice work!
+==                    Logistic Regression Cost |  30 /  30 | Nice work!
+==                Logistic Regression Gradient |  30 /  30 | Nice work!
+================================================================================
+
+1.2.3 Aprendendo parâmetros usando fminunc
+
+Na tarefa anterior, você encontrou os parâmetros ideais de um modelo de regressão linear implementando a descida em gradiente. Você escreveu uma função de custo e calculou seu gradiente e, em seguida, executou uma etapa de descida do gradiente de acordo. Desta vez, em vez de executar etapas de descida de gradiente, você usará uma função interna Octave / MATLAB chamada fminunc.
+
+O Octave / MATLAB fminunc é um solucionador de otimização que encontra o mínimo de uma função 2 irrestrita. Para regressão logística, você deseja otimizar a função de custo J (θ) com os parâmetros θ.
+
+Concretamente, você usará fminunc para encontrar os melhores parâmetros θ para a função de custo de regressão logística, considerando um conjunto de dados fixo (dos valores X e y). Você passará para o fminunc as seguintes entradas:
+
+• Os valores iniciais dos parâmetros que estamos tentando otimizar.
+• Uma função que, quando recebe o conjunto de treinamento e um θ específico, calcula o custo e o gradiente da regressão logística em relação a θ para o conjunto de dados (X, y).
+
+No ex2.m, já temos código escrito para chamar fminunc com os argumentos corretos.
+
+Nesse trecho de código, primeiro definimos as opções a serem usadas com fminunc. Especificamente, configuramos a opção GradObj como on, que informa ao fminunc que nossa função retorna o custo e o gradiente. Isso permite que o fminunc use o gradiente ao minimizar a função. Além disso, configuramos a opção MaxIter como 400, para que o fminunc execute no máximo 400 etapas antes de terminar.
+
+Para especificar a função real que estamos minimizando, usamos um "atalho" para especificar funções com o @ (t) (costFunction (t, X, y)). Isso cria uma função, com o argumento t, que chama sua função de custo. Isso nos permite agrupar a costFunction para uso com fminunc.
+
+Se você concluiu a costFunction corretamente, o fminunc convergirá nos parâmetros de otimização corretos e retornará os valores finais do custo e θ. Observe que, ao usar fminunc, você não precisou escrever nenhum loop, nem definir uma taxa de aprendizado, como fez para a descida do gradiente. Tudo isso é feito pela fminunc: você só precisava fornecer uma função calculando o custo e o gradiente.
+
+Quando o fminunc for concluído, o ex2.m chamará sua função costFunction usando os parâmetros ideais de θ. Você deve ver que o custo é de cerca de 0,203.
+
+Esse valor θ final será usado para plotar o limite de decisão nos dados de treinamento, resultando em uma figura semelhante à Figura 2. Também recomendamos que você observe o código em plotDecisionBoundary.m para ver como plotar esse limite usando o valores θ.
+
+1.2.4 Avaliando a regressão logística
+
+Depois de aprender os parâmetros, você pode usar o modelo para prever se um determinado aluno será admitido. Para um aluno com uma pontuação no Exame 1 de 45 e uma nota no Exame 2 de 85, você deve esperar uma probabilidade de admissão de 0,776.
+
+Outra maneira de avaliar a qualidade dos parâmetros que encontramos é ver quão bem o modelo aprendido prediz em nosso conjunto de treinamento. Nesta parte, sua tarefa é concluir o código em predict.m. A função de previsão produzirá previsões "1" ou "0", dados um conjunto de dados e um vetor de parâmetro aprendido θ.
+
+Depois de concluir o código em predict.m, o script ex2.m continuará relatando a precisão do treinamento do seu classificador, calculando a porcentagem de exemplos que foram corrigidos.
+
+Agora você deve enviar suas soluções.
+
+================================================================================
+==                                   Part Name |     Score | Feedback
+==                                   --------- |     ----- | --------
+==                            Sigmoid Function |   5 /   5 | Nice work!
+==                    Logistic Regression Cost |  30 /  30 | Nice work!
+==                Logistic Regression Gradient |  30 /  30 | Nice work!
+==                                     Predict |   5 /   5 | Nice work!
+================================================================================
+
+2 Regressão logística regularizada
+
+Nesta parte do exercício, você implementará regressão logística regularizada para prever se os microchips de uma fábrica de fabricação passam pela garantia de qualidade (QA). Durante o controle de qualidade, cada microchip passa por vários testes para garantir que esteja funcionando corretamente.
+
+Suponha que você seja o gerente de produto da fábrica e tenha os resultados de alguns microchips em dois testes diferentes. A partir desses dois testes, você gostaria de determinar se os microchips devem ser aceitos ou rejeitados. Para ajudá-lo a tomar a decisão, você tem um conjunto de dados de resultados de testes em microchips anteriores, a partir dos quais é possível construir um modelo de regressão logística.
+
+Você usará outro script, ex2 reg.m para concluir esta parte do
+exercício.
+
+2.1 Visualizando os dados
+
+Semelhante às partes anteriores deste exercício, plotData é usado para gerar uma figura como a Figura 3, em que os eixos são as duas pontuações do teste e os exemplos positivo (y = 1, aceito) e negativo (y = 0, rejeitado) são mostrado com marcadores diferentes.
+
+A Figura 3 mostra que nosso conjunto de dados não pode ser separado em exemplos positivos e negativos por uma linha reta no gráfico. Portanto, uma aplicação direta da regressão logística não terá um bom desempenho nesse conjunto de dados, pois a regressão logística somente poderá encontrar um limite de decisão linear.
+
+2.2 Mapeamento de recursos
+
+Uma maneira de ajustar melhor os dados é criar mais recursos a partir de cada ponto de dados. Na função fornecida mapFeature.m, mapearemos os recursos em todos os termos polinomiais de x 1 e x 2 até a sexta potência.
+
+Como resultado desse mapeamento, nosso vetor de dois recursos (as pontuações em
+dois testes de controle de qualidade) foi transformado em um vetor de 28 dimensões. Um classificador de regressão logística treinado nesse vetor de característica de maior dimensão terá um limite de decisão mais complexo e parecerá não linear quando desenhado em nosso gráfico bidimensional.
+
+Embora o mapeamento de recursos nos permita criar um classificador mais expressivo, ele também é mais suscetível a sobreajuste. Nas próximas partes do exercício, você implementará regressão logística regularizada para ajustar os dados e também verá por si mesmo como a regularização pode ajudar a combater o problema de super ajuste.
+
+2.3 Função de custo e gradiente
+
+Agora você implementará o código para calcular a função de custo e o gradiente para a regressão logística regularizada. Preencha o código em costFunctionReg.m para retornar o custo e o gradiente.
+
+Lembre-se de que a função de custo regularizado na regressão logística é: J (O) ....
+
+Observe que você não deve regularizar o parâmetro θ 0. No Octave / MATLAB, lembre-se de que a indexação começa em 1; portanto, você não deve regularizar o parâmetro theta (1) (que corresponde a θ 0) no código. O gradiente da função de custo é um vetor em que o j-ésimo elemento é definido da seguinte forma: dJ (O) ....
+
+Quando terminar, o ex2 reg.m chamará sua função costFunctionReg usando o valor inicial de θ (inicializado com todos os zeros). Você deve ver que o custo é de cerca de 0,693.
+
+Agora você deve enviar suas soluções.
+
+2.3.1 Aprendendo parâmetros usando fminunc
+
+Semelhante às partes anteriores, você usará fminunc para aprender os parâmetros ideais θ. Se você concluiu o custo e o gradiente da regressão logística regularizada (costFunctionReg.m) corretamente, poderá passar pela próxima parte do ex2 reg.m para aprender os parâmetros θ usando fminunc.
+
+2.4 Traçando o limite de decisão
+
+Para ajudá-lo a visualizar o modelo aprendido por esse classificador, fornecemos a função plotDecisionBoundary.m, que plota o limite de decisão (não linear) que separa os exemplos positivos e negativos. Em plotDecisionBoundary.m, plotamos o limite de decisão não linear calculando as previsões do classificador em uma grade uniformemente espaçada e, em seguida, desenhamos um gráfico de contorno de onde as previsões mudam de y = 0 para y = 1.
+
+Depois de aprender os parâmetros θ, a próxima etapa no ex reg.m plotará um limite de decisão semelhante à Figura 4.
+
+2.5 Exercícios opcionais (não classificados)
+
+Nesta parte do exercício, você experimentará diferentes parâmetros de regularização para o conjunto de dados para entender como a regularização evita o ajuste excessivo.
+
+Observe as mudanças no limite de decisão conforme você varia λ. Com um pequeno λ, você deve achar que o classificador corrige quase todos os exemplos de treinamento, mas desenha um limite muito complicado, super adequando os dados (Figura 5). Esse não é um bom limite de decisão: por exemplo, ele prevê que um ponto em x = (-0,25, 1,5) é aceito (y = 1), o que parece ser uma decisão incorreta, dado o conjunto de treinamento.
+
+Com um λ maior, você verá um gráfico que mostra um limite de decisão mais simples que ainda separa os pontos positivos e negativos razoavelmente bem. No entanto, se λ estiver definido como um valor muito alto, você não terá um bom ajuste e o limite de decisão não seguirá tão bem os dados, prejudicando os dados (Figura 6).

@@ -1,7 +1,7 @@
 # Machine-Learning
 Esse repositório é destinado para o estudo de Machine Learning e contém documentos de cursos online, exercícios, livros, etc.
 
-## Curso: Aprendizagem Automática
+## Curso: [Aprendizagem Automática](https://github.com/camillabarreto/Machine-Learning/tree/master/Cursos/Aprendizagem%20Autom%C3%A1tica)
 * **Fornecido por:** Stanford
 * **Ministrado por:** Andrew Ng
 * **Disponibilizado por:** [Coursera](https://www.coursera.org/learn/machine-learning)

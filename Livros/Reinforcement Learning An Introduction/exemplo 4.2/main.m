@@ -23,9 +23,13 @@ Vs = zeros(num_states,num_states);
 Ps = zeros(num_states,num_states);
 %------------------|
 
-policy_stable = false
-while (!policy_stable)
-
+policy_stable = false;
+i = 0;
+while(i < 2)
+%while (!policy_stable)
+  i
+  Ps
+  
   %-----------------| 2 POLICY EVALUATION |-----------------|
   exit = false;
   while (!exit)
@@ -39,5 +43,6 @@ while (!policy_stable)
   
   %-----------------| 3 POLICY IMPROVEMENT |-----------------| 
   policy_stable = policy_improvement(Vs, Ps, gama, lambda_s1, lambda_d1, lambda_s2, lambda_d2)
-  
+%endwhile
+  i+=1;
 endwhile

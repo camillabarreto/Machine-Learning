@@ -1,70 +1,65 @@
 function policy_stable = policy_improvement(Vs, Ps, gama, lambda_s1, lambda_d1, lambda_s2, lambda_d2)
+  
   policy_stable = true;
-  for state_i = 1:rows(Vs)
-    for state_j = 1:columns(Vs)
-      old_action = Ps(state_i,state_j);
+  
+  for initial_state_i = 1:rows(Vs)
+    for initial_state_j = 1:columns(Vs) %% percorrendo os estados
       
-      %% a acao que gerar o maior valor
-      %% sera a nova politica do estado
+      % quantidade de carros no fim do dia (index 1 = 0 carros)
+      cars_i = initial_state_i - 1;
+      cars_j = initial_state_j - 1;
       
+      if(!((cars_i == 0) && (cars_j == 0)))
       
-      actions = zeros(11,1);
-      for a = 1:columns(actions) %% variando as açoes
-      
-        %% -------------------- FATORAR ESSA PARTE DEPOIS
+        %% mapeando as possiveis açoes
+        max_transfer_absolute = 5;
+        actions = map_actions(cars_i, cars_j, max_transfer_absolute);
+        actions_values = zeros(size(actions));
         
-        V1 = 0; %% novo valor do estado
-        
-        %% ação definida pela politica vai mudar o estado
-        new_i = new_j = 0;
-        policy = a - 6;  %(-5,...,0,...,5)
-        
-        if(policy > 0)
-          new_i = state_i - policy;
-          new_j = state_j + policy;
-        elseif  (policy < 0)
-          new_i = state_i + abs(policy);
-          new_j = state_j + policy;
-        endif
-        
-        for rental_i = 0:new_i %% percorrer possiveis qtds de carros alugados
-          for rental_j = 0:new_j
+        for a = 1:columns(actions_values) %% variando as açoes
           
-            %% FALTA CONSIDERAR A QTD DE CARROS DEVOLVIDOS
-            %% estado s': new - rental + return
-            %% +1 é pq o state 0 eh o index 1
-            s_i = new_i - rental_i + 1 ;
-            s_j = new_j - rental_j + 1;
+          policy = actions(a); %% adotando a açao como politica desse estado
+          V = 0; %% somatorio de valor do estado para a politica adotada
+          
+          %% politica altera qtd de carros dos locais no inicio do dia
+          [cars_i, cars_j] = day_started(cars_i, cars_j, policy);
+          
+          for rental_i = 0:cars_i %% percorrer possiveis qtds de carros alugados
+            for rental_j = 0:cars_j
             
-            %% probabilidade de poisson LOCAL 1
-            pi = poisspdf(rental_i, lambda_s1);
-            %% probabilidade de poisson LOCAL 2
-            pj = poisspdf(rental_j, lambda_s2);
-            
-            %% recompensa pelos carros alugados ($10)
-            reward = 10*(rental_i + rental_j);
+              %% FALTA CONSIDERAR A QTD DE CARROS DEVOLVIDOS
+              %% estado s': day_started - rental + return
+              finale_state_i = cars_i - rental_i + 1; %% +1, index 1 = 0 carros
+              finale_state_j = cars_j - rental_j + 1;
+              
+              %% probabilidade de poisson nos locais
+              pi = poisspdf(rental_i, lambda_s1);
+              pj = poisspdf(rental_j, lambda_s2);
+              
+              %% recompensa pelos carros alugados ($10)
+              reward = 10*(rental_i + rental_j);
 
-            %% incrementar V1
-            V1 += (pi*pj)*(reward + (gama*Vs(s_i, s_j)));
-            
-          end
-        end 
+              %% incrementar V
+              V += (pi*pj)*(reward + (gama*Vs(finale_state_i, finale_state_j)));
+              
+            endfor
+          endfor
+          
+          %% -------------------- FATORAR ATE AQUI
+          
+          actions_values(1,a) = V;
+          
+        endfor
         
-        %% -------------------- FATORAR ATE AQUI
-        
-        actions(a,1) = V1;
-        
-      end
-      
-      %% vejo qual a açao com maior valor
-      [val, pos] = max(actions);
-      Ps(state_i, state_j) = actions(pos,1);
-      
-      if (old_action != Ps(state_i,state_j))
+        old_action = Ps(initial_state_i,initial_state_j);
+        [val, pos] = max(actions_values);
+        Ps(initial_state_i, initial_state_j) = actions(1,pos);
+        if (old_action != Ps(initial_state_i,initial_state_j))
           policy_stable = false;
-      end
+        end
       
-    end
-  end
+      endif
+    endfor
+  endfor
   
 endfunction

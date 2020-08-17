@@ -3,8 +3,7 @@ function [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_s1, lambda_d1, lam
   for state_i = 1:rows(Vs)
     for state_j = 1:columns(Vs) %% percorrer os estados [i = L1 , j = L2]
       
-      V0 = Vs(state_i,state_j); %% valor atual do estado
-      V1 = 0; %% novo valor do estado
+      V = 0; %% novo valor do estado
       policy = Ps(state_i,state_j);
       
       %% ação definida pela politica vai mudar o estado
@@ -34,14 +33,15 @@ function [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_s1, lambda_d1, lam
           %% recompensa pelos carros alugados ($10)
           reward = 10*(rental_i + rental_j);
 
-          %% incrementar V1
-          V1 += (pi*pj)*(reward + (gama*Vs(s_i, s_j)));
+          %% incrementar V
+          V += (pi*pj)*(reward + (gama*Vs(s_i, s_j)));
           
         end
       end
       
-      Vs(state_i,state_i) = V1;
-      delta = max(delta, abs(V0-V1));
+      old_value = Vs(state_i,state_j); %% valor atual do estado
+      Vs(state_i,state_j) = V;
+      delta = max(delta, abs(old_value-V));
       
     end
   end

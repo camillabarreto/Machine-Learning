@@ -1,18 +1,17 @@
-function [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_s1, lambda_d1, lambda_s2, lambda_d2)
+function [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_r, lambda_d)
+
   delta = 0;
   for initial_state_i = 1:rows(Vs)
-    for initial_state_j = 1:columns(Vs) %% percorrer os estados [i = L1 , j = L2]
+    for initial_state_j = 1:columns(Vs) %% percorrer os estados
       
-      % quantidade de carros no fim do dia (index 1 = 0 carros)
-      cars_i = initial_state_i - 1;
-      cars_j = initial_state_j - 1;
+      cars = [initial_state_i, initial_state_j] - 1; %(index 1 = 0 carros)
       
-      old_value = Vs(initial_state_i, initial_state_j); %% valor do estado
+      old_value = Vs(initial_state_i, initial_state_j);
       
       policy = Ps(initial_state_i, initial_state_j);
-      V = sum_value_function(Vs, policy, cars_i, cars_j, gama, lambda_s1, lambda_s2);
+      V = sum_value_function(Vs, policy, cars, gama, lambda_r, lambda_d);
       
-      Vs(initial_state_i, initial_state_j) = V; %% novo valor do estado
+      Vs(initial_state_i, initial_state_j) = V;
       delta = max(delta, abs(old_value-V));
       
     end

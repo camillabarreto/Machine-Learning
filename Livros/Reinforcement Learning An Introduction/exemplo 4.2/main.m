@@ -18,21 +18,19 @@ Vs = zeros(num_states,num_states);
 %------------------|
 
 policy_stable = false;
-i = 0
-while(i < 3)
 
+i = 0;
+while(i < 3) % por enquanto estou rodando o algoritmo 3 vezes para testar
 %while (!policy_stable)
 
   %-----------------| 2 POLICY EVALUATION |-----------------|
+  % A funçao valor sera atualizada ate que esteja convergindo
+  % com uma precisao theta: 0.1
 
   exit = false;
   while (!exit)
   
-    fprintf('POLICY EVALUATION. Press enter to continue.\n'); pause;
     [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_r, lambda_d);
-    
-    delta
-    theta
     
     if (delta < theta) 
       exit = true;
@@ -41,14 +39,13 @@ while(i < 3)
   endwhile
 
   %-----------------| 3 POLICY IMPROVEMENT |-----------------| 
+  % A politica sera atualizada conforme a funçao valor ate que
+  % ocorra estabilidade
   
-  fprintf('POLICY IMPROVEMENT. Press enter to continue.\n'); pause;
   [policy_stable, Ps] = policy_improvement(Vs, Ps, gama, lambda_r, lambda_d);
   
-  Ps
-  policy_stable
-
   i+=1;
+  
 endwhile
 
 Ps

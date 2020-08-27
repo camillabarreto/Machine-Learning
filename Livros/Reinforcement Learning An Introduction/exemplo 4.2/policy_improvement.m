@@ -13,7 +13,7 @@ function [policy_stable, Ps] = policy_improvement(Vs, Ps, gama, lambda_r, lambda
       actions_values = zeros(size(actions)); %% armazena o valor do estado gerado por cada açao
       
       for a = 1:columns(actions_values) %% variando as açoes
-      
+        
         policy = actions(a); %% adotando a açao como politica desse estado
         V = sum_value_function(Vs, policy, cars, gama, lambda_r, lambda_d); %% somatorio das probabilidade
         actions_values(1,a) = V; %% armazenando o valor do estado gerado pela açao
@@ -21,7 +21,9 @@ function [policy_stable, Ps] = policy_improvement(Vs, Ps, gama, lambda_r, lambda
       endfor
       
       [val, pos] = max(actions_values); %% captura a açao gananciosa
-      Ps(initial_state_i, initial_state_j) = actions(1,pos); %% atribui esse açao como nova politica do estado
+      Ps(initial_state_i, initial_state_j) = actions(1,pos) %% atribui esse açao como nova politica do estado
+      
+      fprintf('atualiza estado (politica)\n');pause;
       
       %% se houver alteraçao em pelo menos um estado, a politica esta instavel
       if (old_action != Ps(initial_state_i,initial_state_j)) 

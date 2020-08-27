@@ -1,5 +1,4 @@
 function [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_r, lambda_d)
-
   delta = 0;
   for initial_state_i = 1:rows(Vs)
     for initial_state_j = 1:columns(Vs) %% percorrer os estados
@@ -16,5 +15,4 @@ function [delta, Vs] = policy_evaluation(Vs, Ps, gama, lambda_r, lambda_d)
       
     end
   end
- 
-end
+endfunction
